@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback} from "react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { getSubjects } from "@/lib/api";
