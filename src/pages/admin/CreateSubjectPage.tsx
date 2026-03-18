@@ -91,17 +91,14 @@ export default function CreateSubjectPage() {
             });
 
             // Refresh navigation subjects
-            if ((window as any).refreshNavigationSubjects) {
-                console.log("Refreshing navigation subjects...");
-                (window as any).refreshNavigationSubjects();
-            }
+            window.dispatchEvent(new Event("subjects-updated"));
 
             toast({
                 title: "Subject created",
                 description: `${newSubject.subjectName} has been added successfully.`,
             });
 
-            navigate("/admin");
+            navigate("/admin/subjects");
         } catch (error) {
             toast({
                 title: "Could not create subject",

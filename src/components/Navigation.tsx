@@ -3,11 +3,12 @@ import { Link } from "react-router";
 import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { getSubjects } from "@/lib/api";
 import type { Subject } from "@/types";
+
 
 export function Navigation() {
   const { isSignedIn, getToken } = useAuth();
@@ -15,43 +16,50 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  
 
-  // Fetch subjects on component mount and when refreshTrigger changes
-  useEffect(() => {
-    async function loadSubjects() {
-      try {
-        const token = await getToken({ template: "skill-mentor" });
-        if (token) {
-          const data = await getSubjects(token);
-          setSubjects(data);
-        }
-      } catch (error) {
-        console.error("Failed to load subjects:", error);
-      } finally {
-        setLoadingSubjects(false);
-      }
-    }
-
-    loadSubjects();
-  }, [refreshTrigger]); // Add refreshTrigger to dependencies
-
-  // Function to refresh subjects (can be called from outside)
-  const refreshSubjects = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
-
-  // Expose refresh function globally for other components to use
-  useEffect(() => {
-    (window as any).refreshNavigationSubjects = refreshSubjects;
-    return () => {
-      delete (window as any).refreshNavigationSubjects;
-    };
-  }, []);
 
   const isAdmin =
   Array.isArray(user?.publicMetadata?.roles) &&
   user.publicMetadata.roles.includes("ADMIN");
+
+
+
+  const loadSubjects = useCallback(async () => {
+    try {
+      setLoadingSubjects(true);
+      const token = await getToken({ template: "skill-mentor" });
+
+      if(!token) {
+        setSubjects([]);
+        return;
+      }
+
+      const data = await getSubjects(token);
+      setSubjects(data);
+    
+    }catch (error) {
+      console.error("Error loading subjects:", error);
+      setSubjects([]);
+    } finally {
+      setLoadingSubjects(false);
+    }
+  },[getToken]);
+
+  useEffect(() => {
+    const handleSubjectsUpdated = () => {
+      loadSubjects();
+    };
+
+    window.addEventListener("subjectsUpdated", handleSubjectsUpdated);
+    loadSubjects();
+
+    return () => {
+      window.removeEventListener("subjectsUpdated", handleSubjectsUpdated);
+    };
+  }, [loadSubjects]);
+
+
 
   const NavItems = ({ mobile = false }: { mobile?: boolean }) => (
     <nav
@@ -88,7 +96,7 @@ export function Navigation() {
           "flex items-center gap-3",
           mobile && "flex-col items-start gap-2"
         )}>
-          <span className="text-xs text-muted-foreground">Subjects:</span>
+          <span className="text-xs text-muted-foreground">Subjects</span>
           <div className={cn(
             "flex gap-3",
             mobile && "flex-col gap-2 w-full"
