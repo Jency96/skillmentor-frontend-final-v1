@@ -3,14 +3,37 @@ import { Link } from "react-router";
 import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { getSubjects } from "@/lib/api";
+import type { Subject } from "@/types";
 
 export function Navigation() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, getToken } = useAuth();
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState(true);
+
+  // Fetch subjects on component mount
+  useEffect(() => {
+    async function loadSubjects() {
+      try {
+        const token = await getToken({ template: "skill-mentor" });
+        if (token) {
+          const data = await getSubjects(token);
+          setSubjects(data);
+        }
+      } catch (error) {
+        console.error("Failed to load subjects:", error);
+      } finally {
+        setLoadingSubjects(false);
+      }
+    }
+
+    loadSubjects();
+  }, [getToken]);
 
   const isAdmin =
   Array.isArray(user?.publicMetadata?.roles) &&
@@ -45,6 +68,30 @@ export function Navigation() {
         Resources
       </Link>
 
+      {/* Dynamic Subject Links */}
+      {!loadingSubjects && subjects.length > 0 && (
+        <div className={cn(
+          "flex items-center gap-3",
+          mobile && "flex-col items-start gap-2"
+        )}>
+          <span className="text-xs text-muted-foreground">Subjects:</span>
+          <div className={cn(
+            "flex gap-3",
+            mobile && "flex-col gap-2 w-full"
+          )}>
+            {subjects.map((subject) => (
+              <Link
+                key={subject.id}
+                to={`/subject/${subject.id}`}
+                className="hover:text-primary transition-colors text-sm"
+                onClick={() => mobile && setIsOpen(false)}
+              >
+                {subject.subjectName}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 
