@@ -83,16 +83,22 @@ export default function CreateSubjectPage() {
             const token = await getToken({ template: "skill-mentor" });
             if (!token) throw new Error("Not authenticated");
 
-            await createSubject(token, {
+            const newSubject = await createSubject(token, {
                 subjectName: values.subjectName,
                 description: values.description,
                 courseImageUrl: values.courseImageUrl,
                 mentorId: Number(values.mentorId),
             });
 
+            // Refresh navigation subjects
+            if ((window as any).refreshNavigationSubjects) {
+                console.log("Refreshing navigation subjects...");
+                (window as any).refreshNavigationSubjects();
+            }
+
             toast({
                 title: "Subject created",
-                description: "The subject has been added successfully.",
+                description: `${newSubject.subjectName} has been added successfully.`,
             });
 
             navigate("/admin");

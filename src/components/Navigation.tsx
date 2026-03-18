@@ -15,8 +15,9 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Fetch subjects on component mount
+  // Fetch subjects on component mount and when refreshTrigger changes
   useEffect(() => {
     async function loadSubjects() {
       try {
@@ -33,7 +34,20 @@ export function Navigation() {
     }
 
     loadSubjects();
-  }, [getToken]);
+  }, [refreshTrigger]); // Add refreshTrigger to dependencies
+
+  // Function to refresh subjects (can be called from outside)
+  const refreshSubjects = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  // Expose refresh function globally for other components to use
+  useEffect(() => {
+    (window as any).refreshNavigationSubjects = refreshSubjects;
+    return () => {
+      delete (window as any).refreshNavigationSubjects;
+    };
+  }, []);
 
   const isAdmin =
   Array.isArray(user?.publicMetadata?.roles) &&
