@@ -92,9 +92,6 @@ export default function CreateSubjectPage() {
                 mentorId: Number(values.mentorId),
             });
 
-            // Refresh navigation subjects
-            window.dispatchEvent(new Event("subjects-updated"));
-
             toast({
                 title: "Subject created",
                 description: `${newSubject.subjectName} has been added successfully.`,

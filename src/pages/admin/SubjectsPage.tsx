@@ -4,6 +4,7 @@ import { getSubjects } from "@/lib/api";
 import type { Subject } from "@/types";
 import { useToast } from "@/components/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Link } from "lucide-react";
 
 export default function SubjectsPage() {
   const { getToken } = useAuth();
@@ -47,6 +48,7 @@ export default function SubjectsPage() {
         <CardHeader>
           <CardTitle>Subject List</CardTitle>
         </CardHeader>
+
         <CardContent>
           {loading ? (
             <div className="py-8 text-center text-muted-foreground">
@@ -59,8 +61,11 @@ export default function SubjectsPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {subjects.map((subject) => (
-                <div
+
+                
+                <Link
                   key={subject.id}
+                  to={`/subjects/${subject.id}`}
                   className="overflow-hidden rounded-xl border bg-background"
                 >
                   {subject.courseImageUrl ? (
@@ -81,7 +86,7 @@ export default function SubjectsPage() {
                       {subject.description}
                     </p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

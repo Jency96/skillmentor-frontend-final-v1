@@ -1,64 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
-import { useState, useEffect, useCallback} from "react";
+import { useState} from "react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { getSubjects } from "@/lib/api";
-import type { Subject } from "@/types";
+
+
 
 
 export function Navigation() {
-  const { isSignedIn, getToken } = useAuth();
+  const { isSignedIn} = useAuth();
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [loadingSubjects, setLoadingSubjects] = useState(true);
-  
 
 
   const isAdmin =
-  Array.isArray(user?.publicMetadata?.roles) &&
-  user.publicMetadata.roles.includes("ADMIN");
-
-
-
-  const loadSubjects = useCallback(async () => {
-    try {
-      setLoadingSubjects(true);
-      const token = await getToken({ template: "skill-mentor" });
-
-      if(!token) {
-        setSubjects([]);
-        return;
-      }
-
-      const data = await getSubjects(token);
-      setSubjects(data);
-    
-    }catch (error) {
-      console.error("Error loading subjects:", error);
-      setSubjects([]);
-    } finally {
-      setLoadingSubjects(false);
-    }
-  },[getToken]);
-
-  useEffect(() => {
-    const handleSubjectsUpdated = () => {
-      loadSubjects();
-    };
-
-    window.addEventListener("subjectsUpdated", handleSubjectsUpdated);
-    loadSubjects();
-
-    return () => {
-      window.removeEventListener("subjectsUpdated", handleSubjectsUpdated);
-    };
-  }, [loadSubjects]);
-
+    Array.isArray(user?.publicMetadata?.roles) &&
+    user.publicMetadata.roles.includes("ADMIN");
 
 
   const NavItems = ({ mobile = false }: { mobile?: boolean }) => (
@@ -68,52 +28,39 @@ export function Navigation() {
         mobile && "flex-col items-start gap-4",
       )}
     >
-      <Link
+      <NavLink
         to="/"
         className="hover:text-primary transition-colors"
         onClick={() => mobile && setIsOpen(false)}
       >
         Tutors
-      </Link>
-      <Link
+      </NavLink>
+
+      <NavLink
         to="/"
         className="hover:text-primary transition-colors"
         onClick={() => mobile && setIsOpen(false)}
       >
         About Us
-      </Link>
-      <Link
+      </NavLink>
+
+      <NavLink
         to="/"
         className="hover:text-primary transition-colors"
         onClick={() => mobile && setIsOpen(false)}
       >
         Resources
-      </Link>
+      </NavLink>
 
-      {/* Dynamic Subject Links */}
-      {!loadingSubjects && subjects.length > 0 && (
-        <div className={cn(
-          "flex items-center gap-3",
-          mobile && "flex-col items-start gap-2"
-        )}>
-          <span className="text-xs text-muted-foreground">Subjects</span>
-          <div className={cn(
-            "flex gap-3",
-            mobile && "flex-col gap-2 w-full"
-          )}>
-            {subjects.map((subject) => (
-              <Link
-                key={subject.id}
-                to={`/subject/${subject.id}`}
-                className="hover:text-primary transition-colors text-sm"
-                onClick={() => mobile && setIsOpen(false)}
-              >
-                {subject.subjectName}
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <NavLink
+        to="/admin/subjects"
+        className="hover:text-primary transition-colors"
+        onClick={() => mobile && setIsOpen(false)}
+      >
+        Subjects
+      </NavLink>
+
+
     </nav>
   );
 
@@ -178,6 +125,7 @@ export function Navigation() {
               Login
             </Button>
           </SignInButton>
+
           <Link to="/login">
             <Button
               className={cn(
@@ -228,7 +176,7 @@ export function Navigation() {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </SheetTrigger>
-            
+
             <SheetContent
               side="right"
               className="w-75 bg-black text-white p-6"
