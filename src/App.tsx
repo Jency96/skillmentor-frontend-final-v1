@@ -19,6 +19,7 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
+          
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
@@ -47,6 +48,11 @@ function App() {
               </>
             }
           />
+          
+
+          <Route path="/subjects" element={<SubjectsPage />} />
+          <Route path="/subjects/:id" element={<SubjectDetailPage />} />
+
 
           <Route
             path="/admin"
@@ -62,9 +68,7 @@ function App() {
             }
           >
 
-            <Route path="/subjects" element={<SubjectsPage />} />
-            <Route path="/subjects/:id" element={<SubjectDetailPage />} />
-
+          
             <Route index element={<AdminOverviewPage />} />
             <Route path="subjects/create" element={<CreateSubjectPage />} />
             <Route path="mentors/create" element={<CreateMentorPage />} />
