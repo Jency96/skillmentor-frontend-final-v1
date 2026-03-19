@@ -4,7 +4,8 @@ import { getSubjects } from "@/lib/api";
 import type { Subject } from "@/types";
 import { useToast } from "@/components/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "lucide-react";
+import { Link } from "react-router";
+
 
 export default function SubjectsPage() {
   const { getToken } = useAuth();
@@ -65,7 +66,7 @@ export default function SubjectsPage() {
                 
                 <Link
                   key={subject.id}
-                  to={`/subjects/${subject.id}`}
+                  to={`/admin/subjects/${subject.id}`}
                   className="overflow-hidden rounded-xl border bg-background"
                 >
                   {subject.courseImageUrl ? (

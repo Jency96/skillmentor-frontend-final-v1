@@ -10,7 +10,9 @@ import ManageBookingsPage from "./pages/admin/ManageBookingsPage";
 import CreateMentorPage from "./pages/admin/CreateMentorPage";
 import CreateSubjectPage from "./pages/admin/CreateSubjectPage";
 import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
-import SubjectsPage from "./pages/admin/SubjectsPage";
+import AdminSubjectsPage from "./pages/admin/AdminSubjectsPage";
+import SubjectsPage from "./pages/SubjectsPage";
+import SubjectDetailPage from "./pages/SubjectDetailPage";
 
 function App() {
   return (
@@ -59,16 +61,20 @@ function App() {
               </>
             }
           >
+
+            <Route path="/subjects" element={<SubjectsPage />} />
+            <Route path="/subjects/:id" element={<SubjectDetailPage />} />
+
             <Route index element={<AdminOverviewPage />} />
             <Route path="subjects/create" element={<CreateSubjectPage />} />
             <Route path="mentors/create" element={<CreateMentorPage />} />
             <Route path="bookings" element={<ManageBookingsPage />} />
-            <Route path="subjects" element={<SubjectsPage />} />
+            <Route path="subjects" element={<AdminSubjectsPage />} />
           </Route>
 
           <Route path="*" element={<LoginPage />} />
         </Routes>
-        
+
       </Layout>
     </BrowserRouter>
   );
