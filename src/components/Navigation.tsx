@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router";
 import { useAuth, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import SkillMentorLogo from "@/assets/logo.webp";
 import { Menu } from "lucide-react";
-import { useState} from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 
 export function Navigation() {
-  const { isSignedIn} = useAuth();
+  const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -52,22 +52,26 @@ export function Navigation() {
         Resources
       </NavLink>
 
-      <NavLink
-        to="/admin/subjects"
-        className="hover:text-primary transition-colors"
-        onClick={() => mobile && setIsOpen(false)}
-      >
-        Subjects
-      </NavLink>
+      {isAdmin ? (
+        <NavLink
+          to="/admin/subjects"
+          className="hover:text-primary transition-colors"
+          onClick={() => mobile && setIsOpen(false)}
+        >
+          Subjects
+        </NavLink>
 
-      <NavLink
-        to="/subjects"
-        className="hover:text-primary transition-colors"
-        onClick={() => mobile && setIsOpen(false)}
-      >
-        Subjects
-      </NavLink>
 
+      ) : (
+        <NavLink
+          to="/subjects"
+          className="hover:text-primary transition-colors"
+          onClick={() => mobile && setIsOpen(false)}
+        >
+          Subjects
+        </NavLink>    
+    
+   )}
 
     </nav>
   );
