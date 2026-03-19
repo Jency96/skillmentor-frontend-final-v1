@@ -60,6 +60,14 @@ export function Navigation() {
         Subjects
       </NavLink>
 
+      <NavLink
+        to="/subjects"
+        className="hover:text-primary transition-colors"
+        onClick={() => mobile && setIsOpen(false)}
+      >
+        Subjects
+      </NavLink>
+
 
     </nav>
   );
